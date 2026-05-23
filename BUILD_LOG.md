@@ -35,12 +35,12 @@
 | # | Task | Files | Done? |
 |---|------|-------|------|
 | 1 | Project metadata: `pyproject.toml`, deps pinned, ruff + mypy config | `pyproject.toml` | ✅ |
-| 2 | `.env.example` with required keys (Anthropic, e2b, Kaggle, optional Notion/Slack) | `.env.example` | ✅ |
+| 2 | `.env.example` with Ollama default + optional cloud backend keys (Groq/Together/Deepseek/Anthropic/OpenAI) + e2b + Kaggle | `.env.example` | ✅ |
 | 3 | Empty `src/iterate/` package skeleton (folders + `__init__.py`) | `src/iterate/**/` | ✅ |
 | 4 | Pydantic schemas — `Experiment`, `ExperimentResult`, `Metrics`, `FailureCase`, `Candidate` | `src/iterate/schemas/experiment.py` | ⏳ |
 | 5 | `LLMClient` protocol — what every backend implements | `src/iterate/llm/base.py` | ⏳ |
-| 6 | `AnthropicClient` — first real working LLM call (uses ANTHROPIC_API_KEY) | `src/iterate/llm/anthropic_client.py` | ⏳ |
-| 7 | Smoke test — verify the Anthropic call actually works end-to-end | `tests/unit/test_anthropic_client.py` | ⏳ |
+| 6 | `OpenAICompatibleClient` — first real working LLM call (default: Ollama localhost:11434 + qwen2.5-coder:14b) | `src/iterate/llm/openai_compatible.py` | ⏳ |
+| 7 | Smoke test — verify Ollama call actually works end-to-end | `tests/unit/test_openai_compatible.py` | ⏳ |
 | 8 | CLI scaffold — `iterate --help` runs (no commands yet, just typer setup) | `src/iterate/cli.py` | ⏳ |
 | 9 | First commit message convention doc (semantic commits) | `BUILD_LOG.md` (this section) | ⏳ |
 

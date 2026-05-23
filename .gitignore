@@ -245,6 +245,7 @@ models/*.joblib
 
 # Secrets
 .env.*
+!.env.example
 *.pem
 *.key
 secrets/

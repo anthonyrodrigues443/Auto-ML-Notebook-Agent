@@ -60,8 +60,15 @@ Both inherit from `BenchmarkTarget`. Same iteration loop. Different sandbox exec
 
 ## Quick start
 
+**Local-first. $0. No API keys required.**
+
 ```bash
-# Install
+# Install Ollama (one-time setup)
+brew install ollama
+ollama pull qwen2.5-coder:14b
+ollama serve  # starts background server at localhost:11434
+
+# Install iterate
 pip install iterate
 
 # Initialize a project
