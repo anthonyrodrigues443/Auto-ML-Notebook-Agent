@@ -75,9 +75,9 @@ dev = [
 iterate = "iterate.cli:app"
 
 [project.urls]
-Homepage = "https://github.com/anthonyrodrigues443/iterate"
-Repository = "https://github.com/anthonyrodrigues443/iterate"
-Issues = "https://github.com/anthonyrodrigues443/iterate/issues"
+Homepage = "https://github.com/anthonyrodrigues443/Autonomous-ML-And-LLM-Iteration-Agent"
+Repository = "https://github.com/anthonyrodrigues443/Autonomous-ML-And-LLM-Iteration-Agent"
+Issues = "https://github.com/anthonyrodrigues443/Autonomous-ML-And-LLM-Iteration-Agent/issues"
 
 [build-system]
 requires = ["hatchling"]
