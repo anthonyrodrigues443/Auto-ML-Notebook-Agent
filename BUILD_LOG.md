@@ -148,6 +148,12 @@ Total: ~3 hrs. If a session needs more, the task was too big — split it.
 **Week goal:** close the loop. The LLM autonomously proposes the next candidate, runs it on the Week-2 substrate, scores it, records it, and decides whether to continue — until a deadline / plateau. The first fully autonomous tabular run. Inputs still explicit (data, features, target, metric, baseline/notebook, deadline).
 **Target window:** ~Jun 8–14 (log by real date).
 
+**v0.1 contract (agreed 2026-05-27):**
+- **Inputs:** `--data` + `--target` (required) · `--metric` (required in v0.1 — agent *choosing* the metric is v0.2; may default by task type) · `--baseline` + `--source` notebook/md/txt (optional; source is read as **context** — what's been tried — NOT auto-executed) · `--until` / `--patience` (optional; **patience** is the primary stop, deadline a backstop). Features auto-derive as all columns except target.
+- **Working:** measure *our own* baseline → loop { propose → train → score on the sealed holdout → record → decide } until plateau or deadline. v0.1 candidate space = tabular ML configs (sklearn / XGBoost).
+- **Output:** the **best model** (artifact + the winning config) + its score vs the **baseline we measured** + an **auditable report** of every experiment and why the winner won. Agent proposes; human reviews.
+- **NOT in v0.1:** cost-constraint / serving profile (v0.5) · auto-reproducing a source notebook by executing it (~Week 9 discovery) · the agent picking the metric (v0.2).
+
 | Day | Focus | Lands | Done? |
 |---|---|---|---|
 | 1 | Proposer — LLM proposes the next `Candidate` from the data summary + baseline + past results (+ optional source notebook) | `src/iterate/core/proposer.py` + tests | todo |
