@@ -141,7 +141,7 @@ Total: ~3 hrs. If a session needs more, the task was too big — split it.
 | 2 | Tabular data adapter — load CSV, deterministic stratified split, content-hash | `src/iterate/adapters/data/tabular.py` + tests | done |
 | 3 | `ModelTarget` (sklearn baseline) — wraps dataset + model + metric; `baseline()` train + score → `Metrics` | `src/iterate/targets/model.py` + tests | done |
 | 4 | Model factory — build any allow-listed installed estimator (sklearn/XGBoost/LightGBM) from a `{"model","params"}` spec in `Candidate.changes` | `src/iterate/adapters/models/registry.py` + tests | done |
-| 5 | Local executor — run one `Experiment`: build candidate → train → score → `ExperimentResult` | `src/iterate/adapters/compute/local.py` + tests | todo |
+| 5 | Local executor — run one experiment (baseline or candidate), time it, and **capture failures** so a bad candidate can't crash the loop | `src/iterate/adapters/compute/local.py` + tests | done |
 | 6 | Substrate end-to-end on churn — `baseline()` + `run(supplied candidate)` → result (not yet agent-driven) | `examples/churn_tabular/` + integration test | todo |
 | 7 | Polish + Week 2 retro (BUILD_LOG) | wrap-up | todo |
 
@@ -230,6 +230,23 @@ The discovery agent is what makes the demo wow. It does:
 ---
 
 ## Done
+
+### 2026-05-28 | Week 2 Day 5 | Local executor (minimal failure capture)
+
+**Task:** A compute venue that runs one experiment end-to-end and never lets a bad candidate crash the loop.
+
+**What shipped:**
+- Files: `src/iterate/adapters/compute/local.py` (`LocalExecutor`), `tests/unit/test_local_executor.py` (4 tests)
+- `execute(target, candidate=None)` — `None` runs the baseline, otherwise the candidate; times the run and stamps `duration_seconds`.
+- **Failure capture:** any exception from the target (broken params, a fit-time error, an off-list model) is caught and recorded on `ExperimentResult.error`; `metrics` stays `None` and nothing propagates, so the loop keeps going and Memory can read the reason.
+- 63 tests pass; ruff + mypy --strict clean (22 src files).
+
+**Decisions:**
+- **No `ComputeBackend` Protocol yet** — `LocalExecutor` is the only backend; the Protocol gets extracted when e2b lands (v0.2), with cloud-GPU a third adapter on the same port. Same YAGNI call as the deferred `DataSource` protocol.
+- **Crash = `error` string** for v0.1; a richer structured `FailureCase`/traceback for the Week-3 Memory store is tracked in the backlog (before v0.1).
+- Hard isolation (timeouts, resource caps, killing runaway training) is the e2b sandbox's job → v0.2 (backlog).
+
+**Next session:** Week 2 Day 6 — substrate end-to-end on a real churn dataset in `examples/`: `baseline()` + a supplied candidate through the executor, with an integration test.
 
 ### 2026-05-28 | Week 2 Day 4 | Model factory (any installed estimator) + bumped sandbox code-gen to v0.2
 
@@ -424,4 +441,5 @@ The discovery agent is what makes the demo wow. It does:
 
 Items not in this week's top P0 but worth keeping visible.
 
-(empty)
+- **Hard execution isolation → v0.2 (sandbox).** The v0.1 local executor does *minimal* failure capture — catch the exception, record it on `ExperimentResult.error`, keep the loop alive. Real isolation belongs with the e2b sandbox path: per-experiment **timeouts**, **memory/CPU caps**, killing runaway training, and capturing stdout/stderr into `logs`. Deferred deliberately so v0.1 ships; revisit when building the (c) sandboxed code-gen path.
+- **Richer failure capture → before v0.1.** The local executor records a crash as a plain `ExperimentResult.error` string. Before the first release, enrich it for the Week-3 Memory store: a structured `FailureCase` (error_type + the offending spec) and/or captured traceback, so the Proposer reliably avoids re-proposing a known-broken change. (User call 2026-05-28: string is fine now, improve before v0.1.)
